@@ -58,7 +58,7 @@ const CustomerDetail = () => {
     createdBy: '',
     createdOn: ''
   });
-  const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (prop: keyof State) => (event: any) => {
     setValues({ ...values, [prop]: event.target.value })
   }
  console.log(`FirstName is ${values.firstName}`)
