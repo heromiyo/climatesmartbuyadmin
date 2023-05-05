@@ -23,7 +23,7 @@ import DatePicker from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 const CustomInput = forwardRef((props, ref) => {
-  return <TextField inputRef={ref} label='Birth Date' fullWidth {...props} />
+  return <TextField inputRef={ref} label='Date' fullWidth {...props} />
 })
 
 interface State {
@@ -41,7 +41,8 @@ interface State {
   createdOn: string
 }
 
-const CustomerDetail = () => {
+const CustomerDetail = (props) => {
+  console.log(`We got props: ${JSON.stringify(props)}`)
   // ** State
   const [date, setDate] = useState<Date | null | undefined>(null)
   const [values, setValues] = useState<State>({
@@ -62,7 +63,7 @@ const CustomerDetail = () => {
     setValues({ ...values, [prop]: event.target.value })
   }
  console.log(`FirstName is ${values.firstName}`)
-  
+
 return (
     <CardContent>
       <form>
@@ -70,8 +71,8 @@ return (
 
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
-              <InputLabel>Title</InputLabel>
-              <Select label='Title' defaultValue='Mrs' value={values.title} onChange={handleChange('title')}>
+              <InputLabel>{props.value.title}</InputLabel>
+              <Select label={props.value.title} defaultValue={props.value.title} placeholder={props.value.title} value={values.title} onChange={handleChange('title')}>
                 <MenuItem value='Mr'>Mr</MenuItem>
                 <MenuItem value='Ms'>Ms</MenuItem>
                 <MenuItem value='Mrs'>Mrs</MenuItem>
@@ -82,7 +83,7 @@ return (
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='FirstName'
+              label={props.value.firstName}
               value={values.firstName}
               onChange={handleChange('firstName')}
               placeholder='First Name'
@@ -92,7 +93,7 @@ return (
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='LastName'
+              label={props.value.lastName}
               value={values.lastName}
               onChange={handleChange('lastName')}
               placeholder='Last Name'
@@ -102,7 +103,7 @@ return (
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='NRC'
+              label={props.value.nrc}
               value={values.nrc}
               onChange={handleChange('nrc')}
               placeholder='NRC'
@@ -112,7 +113,7 @@ return (
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Employee Number'
+              label={props.value.employeeNumber}
               value={values.employeeNumber}
               onChange={handleChange('employeeNumber')}
               placeholder='Employee Number'
@@ -122,7 +123,7 @@ return (
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='District'
+              label={props.value.district}
               value={values.district}
               onChange={handleChange('district')}
               placeholder='District'
@@ -132,7 +133,7 @@ return (
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Department'
+              label={props.value.department}
               placeholder='Department'
               value={values.department}
               onChange={handleChange('department')}
@@ -142,7 +143,7 @@ return (
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Institution'
+              label={props.value.institution}
               value={values.institution}
               onChange={handleChange('institution')}
               placeholder='Institution'
@@ -152,7 +153,7 @@ return (
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Created By'
+              label={props.value.agentName}
               value={values.createdBy}
               onChange={handleChange('createdBy')}
               placeholder='Created By'
@@ -173,7 +174,11 @@ return (
             </DatePickerWrapper>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth type='number' label='Phone' placeholder='(123) 456-7890' />
+            <TextField fullWidth type='number' label={props.value.primaryPhoneNumber} placeholder='(123) 456-7890' />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth type='number' label={props.value.secondaryPhoneNumber} placeholder='(123) 456-7890' />
           </Grid>
 
 

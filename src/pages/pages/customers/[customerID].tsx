@@ -48,14 +48,25 @@ import CustomerDetail from "../../../layouts/components/detail/CustomerDetail";
 
 const CustomerDetails = () => {
   const router = useRouter()
-  const { agentID } = router.query
+  const { customerID } = router.query
 
   const [value, loading, error] = useDocument(
-    doc(getFirestore(firebase), 'users', String(agentID)),
+    doc(getFirestore(firebase), 'customers', String(customerID)),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
   );
+  const [userValue, userLoading, userError] = useDocument(
+    value && value.data().createdBy ?
+      doc(getFirestore(firebase), 'users', String(value.data().createdBy)) :
+      null,
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
+  console.log(`We got the agent ${JSON.stringify(userValue?.data())}`)
+
   if (loading) {
     return 'loading...'
   }
@@ -63,15 +74,22 @@ const CustomerDetails = () => {
     return `Error: ${error}`
   }
 
-  const newData = null;
-  console.log(value?.data())
+
+  const mergedValue = {
+    ...value?.data(),
+    agentName: `${userValue?.data().firstName} ${userValue?.data().lastName}`
+  }
+
+  console.log(`Merged data: ${JSON.stringify(mergedValue)}`)
+
+
 
 
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>
         <Grid item xs={12} md={12}>
-          <CustomerDetail />
+          <CustomerDetail value={ mergedValue} />
         </Grid>
 
       </Grid>
