@@ -22,6 +22,7 @@ const DetailImg = styled('img')({
 
 const Detail = (props) => {
   console.log(`Props: ${JSON.stringify(props)}`);
+
   // ** Hook
   const theme = useTheme();
   const dateJoined = new Date(props.value.dateJoined.seconds * 1000 + props.value.dateJoined.nanoseconds / 1000000).toLocaleDateString();

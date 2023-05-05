@@ -62,7 +62,8 @@ const CustomerDetail = () => {
     setValues({ ...values, [prop]: event.target.value })
   }
  console.log(`FirstName is ${values.firstName}`)
-  return (
+  
+return (
     <CardContent>
       <form>
         <Grid container spacing={7}>

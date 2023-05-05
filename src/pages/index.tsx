@@ -23,6 +23,7 @@ import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 
 const Dashboard = () => {
+  // @ts-ignore
   return (
     <ApexChartWrapper>
       <Grid container spacing={6}>

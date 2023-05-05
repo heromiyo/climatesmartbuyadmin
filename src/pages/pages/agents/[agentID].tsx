@@ -21,6 +21,7 @@ import { getFirestore, doc } from 'firebase/firestore';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import firebase from "../../../firebase/config";
 import { useRouter } from 'next/router'
+
 // ** Icons Imports
 import Poll from 'mdi-material-ui/Poll'
 import CurrencyUsd from 'mdi-material-ui/CurrencyUsd'
@@ -61,7 +62,7 @@ const AgentDetails = () => {
     return `Error: ${error}`
   }
 
-  let newData = null;
+  const newData = null;
   console.log(value?.data())
 
 

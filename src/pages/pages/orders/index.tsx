@@ -17,25 +17,11 @@ import { getFirestore, collection } from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import firebase from '../../../firebase/config'
 
-interface RowType {
-  name: string
-  date: string
-  numberOfItems: number
-  amount: string
-  status: string
-  isCollected: boolean
-}
-
 interface StatusObj {
   [key: string]: {
     color: ThemeColor
   }
 }
-
-const rows: RowType[] = [
-
-]
-
 const statusObj: StatusObj = {
   applied: { color: 'info' },
   rejected: { color: 'error' },

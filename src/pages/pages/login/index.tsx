@@ -8,7 +8,6 @@ import { useRouter } from 'next/router'
 // ** MUI Components
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
@@ -23,10 +22,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
 
 // ** Icons Imports
-import Google from 'mdi-material-ui/Google'
-import Github from 'mdi-material-ui/Github'
-import Twitter from 'mdi-material-ui/Twitter'
-import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
@@ -39,7 +34,6 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
-import { useIdToken } from 'react-firebase-hooks/auth';
 import firebase from '../../../firebase/config'
 import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
 
@@ -76,6 +70,7 @@ const LoginPage = () => {
     showPassword: false
   })
 const auth = getAuth(firebase)
+
   // const [
   //   signInWithEmailAndPassword,
   //   user,
@@ -88,7 +83,6 @@ const auth = getAuth(firebase)
   const theme = useTheme()
   const router = useRouter()
 
-  const [user, loading, error] = useIdToken(auth)
   const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value })
   }
@@ -103,7 +97,7 @@ const auth = getAuth(firebase)
 const handleLogin =  async (values) => {
    try {
      const data = await signInWithEmailAndPassword(auth,values.email, values.password)
-     if (!error && data) {
+     if (! data) {
        router.push('/')
      }
 
