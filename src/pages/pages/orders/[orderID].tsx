@@ -1,6 +1,6 @@
 // import { useRouter } from 'next/router'
 //
-// function AgentDetails() {
+// function OrderDetail() {
 //   const router = useRouter()
 //   const { agentID } = router.query // retrieve employeeNumber from route params
 //
@@ -14,7 +14,7 @@
 //   )
 // }
 //
-// export default AgentDetails
+// export default OrderDetail
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import { getFirestore, doc } from 'firebase/firestore';
@@ -43,44 +43,65 @@ import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 import Detail from "../../../layouts/components/detail/Detail";
-import DetailStats from "../../../layouts/components/detail/DetailStats";
 import PrivateRoute from "../../privateRoute";
-import DetailAgent from "../../../layouts/components/detail/AgentDetail";
+import DetailOrder from "../../../layouts/components/detail/OrderDetail";
 
-const AgentDetails = () => {
+const OrderDetail = () => {
   const router = useRouter()
-  const { agentID } = router.query
+  const { orderID } = router.query
 
   const [value, loading, error] = useDocument(
-    doc(getFirestore(firebase), 'users', String(agentID)),
+    doc(getFirestore(firebase), 'orders', String(orderID)),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
   );
+
+  const [userValue, userLoading, userError] = useDocument(
+    value && value.data().createdBy ?
+      doc(getFirestore(firebase), 'users', String(value.data().createdBy)) :
+      null,
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
+  const [customerValue, customerLoading, customerError] = useDocument(
+    value && value.data().createdBy ?
+      doc(getFirestore(firebase), 'customers', String(value.data().customer)) :
+      null,
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+  const mergedValue = {
+    ...value?.data(),
+    agentName: `${userValue?.data()?.firstName? userValue?.data()?.firstName : null }
+    ${userValue?.data()?.lastName? userValue?.data()?.lastName : null}`,
+    customerName: `${customerValue?.data()?.firstName? customerValue?.data()?.firstName : null }
+    ${customerValue?.data()?.lastName? customerValue?.data()?.lastName : null}`,
+    orderId: orderID
+  }
   if (loading) {
-    return 'loading...'
+    return 'loading order...'
   }
   if (error) {
     return `Error: ${error}`
   }
 
-  const newData = null;
-  console.log(value?.data())
 
 
   return (
-    <PrivateRoute>
     <ApexChartWrapper>
       <Grid container spacing={6}>
         <Grid item xs={12} md={12}>
-          <DetailAgent value={value.data()} />
+          <DetailOrder value={ mergedValue} />
         </Grid>
 
       </Grid>
     </ApexChartWrapper>
-    </PrivateRoute>
 
   )
 }
 
-export default AgentDetails
+export default OrderDetail

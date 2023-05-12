@@ -17,6 +17,8 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { getFirestore, collection , query, where, orderBy} from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import firebase from '../../../firebase/config'
+import PrivateRoute from "../../privateRoute";
+import {useRouter} from "next/router";
 
 interface RowType {
   name: string
@@ -91,6 +93,7 @@ const AcceptedOrdersPage = () => {
     }
   });
 
+  const router = useRouter()
 
 
 
@@ -107,7 +110,8 @@ const AcceptedOrdersPage = () => {
   //console.log(`Our value is ${JSON.stringify(value)}`)
 
   return (
-    <Card>
+
+    <PrivateRoute><Card>
       <TableContainer>
         <Table sx={{ minWidth: 800 }} aria-label='table in dashboard'>
           <TableHead>
@@ -122,7 +126,7 @@ const AcceptedOrdersPage = () => {
           </TableHead>
           <TableBody>
             {latestData.map((row) => (
-              <TableRow hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
+              <TableRow onClick={() => router.push(`/pages/orders/${row.id}`) } hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
                 <TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography sx={{ fontWeight: 500, fontSize: '0.875rem !important' }}>{row.name}</Typography>
@@ -150,6 +154,7 @@ const AcceptedOrdersPage = () => {
         </Table>
       </TableContainer>
     </Card>
+    </PrivateRoute>
   )
 }
 

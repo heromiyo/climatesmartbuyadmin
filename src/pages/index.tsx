@@ -21,10 +21,27 @@ import StatisticsCard from 'src/views/dashboard/StatisticsCard'
 import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
 import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
+import {useRouter} from "next/router";
+import {useEffect} from "react";
+import PrivateRoute from "./privateRoute";
 
 const Dashboard = () => {
+
+
+  // console.log(`in index redirectPath is ${redirectPath}`)
+  //   if (typeof window !== 'undefined' && redirectPath === '/pages/login') {
+  //     router.push('/pages/login')
+  //   }
+
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined' && redirectPath === '/pages/login') {
+  //     router.push('/pages/login')
+  //   }
+  // }, [redirectPath])
+
   // @ts-ignore
   return (
+    <PrivateRoute>
     <ApexChartWrapper>
       <Grid container spacing={6}>
         {/*<Grid item xs={12} md={4}>*/}
@@ -96,6 +113,7 @@ const Dashboard = () => {
         </Grid>
       </Grid>
     </ApexChartWrapper>
+    </PrivateRoute>
   )
 }
 

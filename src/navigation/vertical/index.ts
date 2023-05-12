@@ -13,7 +13,10 @@ import GoogleCirclesExtended from 'mdi-material-ui/GoogleCirclesExtended'
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
-const navigation = (): VerticalNavItemsType => {
+
+const Navigation = (): VerticalNavItemsType => {
+
+
   return [
     {
       title: 'Home',
@@ -73,4 +76,4 @@ const navigation = (): VerticalNavItemsType => {
   ]
 }
 
-export default navigation
+export default Navigation

@@ -1,200 +1,91 @@
 // ** React Imports
-import {ChangeEvent, forwardRef, useState} from 'react'
+import {useState} from 'react'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
-import Radio from '@mui/material/Radio'
-import Select from '@mui/material/Select'
+
 import Button from '@mui/material/Button'
-import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
-import FormLabel from '@mui/material/FormLabel'
-import InputLabel from '@mui/material/InputLabel'
-import RadioGroup from '@mui/material/RadioGroup'
-import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import FormControlLabel from '@mui/material/FormControlLabel'
 
-// ** Third Party Imports
-import DatePicker from 'react-datepicker'
+import Typography from "@mui/material/Typography";
 
-// ** Styled Components
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import CustomerDetailEdit from "./CustomerDetailEdit";
+import CardContent from "@mui/material/CardContent";
 
-const CustomInput = forwardRef((props, ref) => {
-  return <TextField inputRef={ref} label='Date' fullWidth {...props} />
-})
 
-interface State {
-  title: string
-  firstName: string
-  lastName: string
-  nrc: string
-  employeeNumber: string
-  primaryPhoneNumber: string
-  secondaryPhoneNumber: string
-  district: string
-  department: string
-  institution: string
-  createdBy: string
-  createdOn: string
-}
+
+
 
 const CustomerDetail = (props) => {
-  console.log(`We got props: ${JSON.stringify(props)}`)
-  // ** State
-  const [date, setDate] = useState<Date | null | undefined>(null)
-  const [values, setValues] = useState<State>({
-    title: '',
-    firstName: '',
-    lastName: '',
-    nrc: '',
-    employeeNumber: '',
-    primaryPhoneNumber: '',
-    secondaryPhoneNumber: '',
-    district: '',
-    department: '',
-    institution: '',
-    createdBy: '',
-    createdOn: ''
-  });
-  const handleChange = (prop: keyof State) => (event: any) => {
-    setValues({ ...values, [prop]: event.target.value })
+
+
+
+  const [isEditing, setIsEditing] = useState(false);
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+  if (isEditing) {
+    return <CustomerDetailEdit {...props}  />;
   }
- console.log(`FirstName is ${values.firstName}`)
 
 return (
-    <CardContent>
-      <form>
-        <Grid container spacing={7}>
-
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>{props.value.title}</InputLabel>
-              <Select label={props.value.title} defaultValue={props.value.title} placeholder={props.value.title} value={values.title} onChange={handleChange('title')}>
-                <MenuItem value='Mr'>Mr</MenuItem>
-                <MenuItem value='Ms'>Ms</MenuItem>
-                <MenuItem value='Mrs'>Mrs</MenuItem>
-                <MenuItem value='Miss'>Miss</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={props.value.firstName}
-              value={values.firstName}
-              onChange={handleChange('firstName')}
-              placeholder='First Name'
-              defaultValue='Some Name'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={props.value.lastName}
-              value={values.lastName}
-              onChange={handleChange('lastName')}
-              placeholder='Last Name'
-              defaultValue='Some Name'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={props.value.nrc}
-              value={values.nrc}
-              onChange={handleChange('nrc')}
-              placeholder='NRC'
-              defaultValue='Some NRC'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={props.value.employeeNumber}
-              value={values.employeeNumber}
-              onChange={handleChange('employeeNumber')}
-              placeholder='Employee Number'
-              defaultValue='Some Num'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={props.value.district}
-              value={values.district}
-              onChange={handleChange('district')}
-              placeholder='District'
-              defaultValue='Some Num'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={props.value.department}
-              placeholder='Department'
-              value={values.department}
-              onChange={handleChange('department')}
-              defaultValue='Some Num'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={props.value.institution}
-              value={values.institution}
-              onChange={handleChange('institution')}
-              placeholder='Institution'
-              defaultValue='Some Num'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={props.value.agentName}
-              value={values.createdBy}
-              onChange={handleChange('createdBy')}
-              placeholder='Created By'
-              defaultValue='Some Num'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <DatePickerWrapper>
-              <DatePicker
-                selected={date}
-                showYearDropdown
-                showMonthDropdown
-                id='account-settings-date'
-                placeholderText='MM-DD-YYYY'
-                customInput={<CustomInput />}
-                onChange={(date: Date) => setDate(date)}
-              />
-            </DatePickerWrapper>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth type='number' label={props.value.primaryPhoneNumber} placeholder='(123) 456-7890' />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth type='number' label={props.value.secondaryPhoneNumber} placeholder='(123) 456-7890' />
-          </Grid>
-
-
-
-          <Grid item xs={12}>
-            <Button variant='contained' sx={{ marginRight: 3.5 }}>
-              Save Changes
-            </Button>
-            <Button type='reset' variant='outlined' color='secondary' onClick={() => setDate(null)}>
-              Reset
-            </Button>
-          </Grid>
+  <CardContent>
+    <div>
+      <Grid container spacing={7}>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">Title:</Typography>
+          <Typography>{props.value.title}</Typography>
         </Grid>
-      </form>
-    </CardContent>
-  )
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1"> Name:</Typography>
+          <Typography>{`${props.value.firstName? props.value.firstName : null} ${props.value.lastName? props.value.lastName : null}`}</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">Order Count:</Typography>
+          <Typography>{props.value.orderCount}</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">NRC:</Typography>
+          <Typography>{props.value.nrc}</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">Employee Number:</Typography>
+          <Typography>{props.value.employeeNumber}</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">District:</Typography>
+          <Typography>{props.value.district}</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">Department:</Typography>
+          <Typography>{props.value.department}</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">Institution:</Typography>
+          <Typography>{props.value.institution}</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">Agent Name:</Typography>
+          <Typography>{props.value.agentName}</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">Primary Phone Number:</Typography>
+          <Typography>{props.value.primaryPhoneNumber}</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subtitle1">Secondary Phone Number:</Typography>
+          <Typography>{props.value.secondaryPhoneNumber}</Typography>
+        </Grid>
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleEdit}>
+            Edit Customer
+          </Button>
+        </Grid>
+
+      </Grid>
+    </div>
+  </CardContent>
+
+)
 }
 
 export default CustomerDetail

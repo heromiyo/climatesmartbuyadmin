@@ -20,6 +20,7 @@ import firebase from '../../../firebase/config'
 
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import PrivateRoute from "../../privateRoute";
 
 interface RowType {
   name: string
@@ -114,6 +115,7 @@ const AgentsPage = () => {
   //console.log(`Our value is ${JSON.stringify(value)}`)
 
   return (
+    <PrivateRoute>
     <Card>
       <TableContainer>
         <Table sx={{ minWidth: 800 }} aria-label='table in dashboard'>
@@ -142,6 +144,7 @@ const AgentsPage = () => {
         </Table>
       </TableContainer>
     </Card>
+    </PrivateRoute>
   )
 }
 

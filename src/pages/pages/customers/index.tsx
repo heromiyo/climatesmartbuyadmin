@@ -17,6 +17,7 @@ import { getFirestore, collection } from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import firebase from '../../../firebase/config'
 import {useRouter} from "next/router";
+import PrivateRoute from "../../privateRoute";
 
 interface RowType {
   name: string
@@ -120,6 +121,7 @@ const CustomersPage = () => {
   //console.log(`Our value is ${JSON.stringify(value)}`)
 
   return (
+    <PrivateRoute>
     <Card>
       <TableContainer>
         <Table sx={{ minWidth: 800 }} aria-label='table in dashboard'>
@@ -148,6 +150,7 @@ const CustomersPage = () => {
         </Table>
       </TableContainer>
     </Card>
+    </PrivateRoute>
   )
 }
 

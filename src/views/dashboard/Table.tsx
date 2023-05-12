@@ -16,6 +16,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { getFirestore, collection } from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import firebase from '../../firebase/config'
+import {useRouter} from "next/router";
 
 interface RowType {
   name: string
@@ -43,32 +44,68 @@ const statusObj: StatusObj = {
 }
 
 const DashboardTable = () => {
+  const router = useRouter()
   const [value, loading, error] = useCollection(
     collection(getFirestore(firebase), 'orders')
   );
 
-  const newData: { name: string; status: string; orderStatus: any; isCollected: any; itemNum: any; formType: any; installmentAmount: any; totalPrice: any; collectionDate: any }[] = [];
+  const newData: {
+    id: string;
+    name: string;
+    status: string;
+    orderStatus: any;
+    isCollected: any;
+    itemNum: any;
+    formType: any;
+    installmentAmount: any;
+    totalPrice: any;
+    collectionDate: any;
+  }[] = [];
 
   value?.forEach((doc) => {
     const data = doc.data();
-    const { firstName, lastName, orderStatus, isCollected, ...rest } = data;
+    const {
+      firstName,
+      lastName,
+      orderStatus,
+      isCollected,
+      ...rest
+    } = data;
     const name = `${firstName} ${lastName}`;
     const status = orderStatus === 'accepted' ? 'accepted' : 'rejected';
-    newData.push({ name, status, orderStatus, isCollected, itemNum: rest.itemNum, formType: rest.formType, installmentAmount: rest.installmentAmount, totalPrice: rest.totalPrice, collectionDate: rest.collectionDate, ...rest });
+    newData.push({
+      name,
+      status,
+      orderStatus,
+      isCollected,
+      itemNum: rest.itemNum,
+      formType: rest.formType,
+      installmentAmount: rest.installmentAmount,
+      totalPrice: rest.totalPrice,
+      collectionDate: rest.collectionDate,
+      ...rest,
+      id: doc.id,
+    });
   });
 
-  const sortedData = newData.sort((a, b) => {
-    const dateA = new Date(a.collectionDate);
-    const dateB = new Date(b.collectionDate);
+  const sortedData = newData
+    .map((data, index) => ({ ...data, index }))
+    .sort((a, b) => {
+      const dateA = new Date(a.collectionDate);
+      const dateB = new Date(b.collectionDate);
+      return dateB.getTime() - dateA.getTime() || a.index - b.index;
+    })
+    .map(({ id, index, ...rest }) => ({ id, ...rest }));
 
-return dateB.getTime() - dateA.getTime();
-  });
+  const latestData = sortedData
+    .slice(0, 15)
+    .map(({ id, ...rest }) => ({ id, ...rest }));
 
-  const latestData = sortedData.slice(0, 15);
+  latestData.map((d) => console.log(`Latest id is ${JSON.stringify(d)}`))
 
 
 
-if (loading) {
+  if (loading) {
   return 'loading...'
 }
 
@@ -95,7 +132,7 @@ if (error) {
           </TableHead>
           <TableBody>
             {latestData.map((row) => (
-              <TableRow hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
+              <TableRow onClick={() => router.push(`/pages/orders/${row.id}`) } hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
                 <TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography sx={{ fontWeight: 500, fontSize: '0.875rem !important' }}>{row.name}</Typography>

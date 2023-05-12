@@ -97,7 +97,10 @@ const auth = getAuth(firebase)
 const handleLogin =  async (values) => {
    try {
      const data = await signInWithEmailAndPassword(auth,values.email, values.password)
-     if (! data) {
+     if (data) {
+       const token = await data.user.getIdToken();
+       localStorage.setItem('authToken', token);
+       console.log(`Login token: ${token}`)
        router.push('/')
      }
 

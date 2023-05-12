@@ -45,6 +45,7 @@ import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 import Detail from "../../../layouts/components/detail/Detail";
 import DetailStats from "../../../layouts/components/detail/DetailStats";
 import CustomerDetail from "../../../layouts/components/detail/CustomerDetail";
+import PrivateRoute from "../../privateRoute";
 
 const CustomerDetails = () => {
   const router = useRouter()
@@ -77,7 +78,9 @@ const CustomerDetails = () => {
 
   const mergedValue = {
     ...value?.data(),
-    agentName: `${userValue?.data().firstName} ${userValue?.data().lastName}`
+    agentName: `${userValue?.data()?.firstName? userValue?.data()?.firstName : null }
+    ${userValue?.data()?.lastName? userValue?.data()?.lastName : null}`,
+    customerID: customerID
   }
 
   console.log(`Merged data: ${JSON.stringify(mergedValue)}`)
@@ -86,6 +89,7 @@ const CustomerDetails = () => {
 
 
   return (
+    <PrivateRoute>
     <ApexChartWrapper>
       <Grid container spacing={6}>
         <Grid item xs={12} md={12}>
@@ -94,6 +98,7 @@ const CustomerDetails = () => {
 
       </Grid>
     </ApexChartWrapper>
+    </PrivateRoute>
 
   )
 }

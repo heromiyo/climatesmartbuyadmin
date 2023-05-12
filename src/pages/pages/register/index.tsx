@@ -37,6 +37,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+import PrivateRoute from "../../privateRoute";
 
 interface State {
   password: string
@@ -84,6 +85,7 @@ const RegisterPage = () => {
   }
 
   return (
+    <PrivateRoute>
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
@@ -247,6 +249,7 @@ const RegisterPage = () => {
       </Card>
       <FooterIllustrationsV1 />
     </Box>
+    </PrivateRoute>
   )
 }
 
