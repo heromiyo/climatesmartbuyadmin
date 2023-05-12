@@ -18,6 +18,8 @@ import { useCollection } from 'react-firebase-hooks/firestore';
 import firebase from '../../../firebase/config'
 import {useRouter} from "next/router";
 import PrivateRoute from "../../privateRoute";
+import Button from "@mui/material/Button";
+import exportDataToExcel from "../../../configs/exportToExcel";
 
 interface RowType {
   name: string
@@ -47,6 +49,13 @@ const CustomersPage = () => {
   const [value, loading, error] = useCollection(
     collection(getFirestore(firebase), 'customers')
   );
+
+  const handleExportClick = () => {
+    if (value) {
+      const data = value.docs.map((doc) => doc.data());
+      exportDataToExcel(data, 'customers', 'output.xlsx');
+    }
+  };
 
   const newData: {
     name: string;
@@ -122,6 +131,11 @@ const CustomersPage = () => {
 
   return (
     <PrivateRoute>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
+        <Button variant='contained' onClick={handleExportClick}>
+          Export to Excel
+        </Button>
+      </Box>
     <Card>
       <TableContainer>
         <Table sx={{ minWidth: 800 }} aria-label='table in dashboard'>
