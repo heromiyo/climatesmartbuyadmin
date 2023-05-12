@@ -97,17 +97,17 @@ const auth = getAuth(firebase)
     event.preventDefault()
   }
   const handleLogin = async (values) => {
-    const [value, loading, error] = useCollection(
-      collection(getFirestore(firebase), 'admins')
-    );
+    // const [value, loading, error] = useCollection(
+    //   collection(getFirestore(firebase), 'admins')
+    // );
     try {
       // Check if the provided email exists in the `admins` collection
-      const isAdmin = value && value.docs.some
-      ((doc) => doc.data().email === values.email);
-      if (!isAdmin) {
-        // If the email does not exist in the `admins` collection, the user is not an admin
-        return 'You are not an admin.';
-      }
+      // const isAdmin = value && value.docs.some
+      // ((doc) => doc.data().email === values.email);
+      // if (!isAdmin) {
+      //   // If the email does not exist in the `admins` collection, the user is not an admin
+      //   return 'You are not an admin.';
+      // }
 
       // If the email exists in the `admins` collection, sign in the user
       const data = await signInWithEmailAndPassword(auth, values.email, values.password);

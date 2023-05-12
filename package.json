@@ -67,7 +67,8 @@
     "react-firebase-hooks": "^5.1.1",
     "react-paginate": "^8.2.0",
     "react-perfect-scrollbar": "^1.5.8",
-    "react-popper": "^2.2.5"
+    "react-popper": "^2.2.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "16.11.11",
