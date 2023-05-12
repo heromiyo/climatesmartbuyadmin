@@ -1,7 +1,7 @@
 // PrivateRoute.js
 import React, {useEffect} from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from './pages/auth';
+import { useAuth } from './auth';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading, error } = useAuth();

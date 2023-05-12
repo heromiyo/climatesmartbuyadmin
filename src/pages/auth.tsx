@@ -1,6 +1,6 @@
 // AuthProvider.js
 import React, { createContext, useContext } from 'react';
-import firebase from '../../firebase/config';
+import firebase from '../firebase/config';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { getAuth } from 'firebase/auth';
 
