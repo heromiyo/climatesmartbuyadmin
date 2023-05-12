@@ -36,6 +36,8 @@ import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
 import firebase from '../../../firebase/config'
 import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
+import {useCollection} from "react-firebase-hooks/firestore";
+import {collection, getFirestore} from "firebase/firestore";
 
 
 interface State {
@@ -94,23 +96,32 @@ const auth = getAuth(firebase)
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
   }
-const handleLogin =  async (values) => {
-   try {
-     const data = await signInWithEmailAndPassword(auth,values.email, values.password)
-     if (data) {
-       const token = await data.user.getIdToken();
-       localStorage.setItem('authToken', token);
-       console.log(`Login token: ${token}`)
-       router.push('/')
-     }
+  const handleLogin = async (values) => {
+    const [value, loading, error] = useCollection(
+      collection(getFirestore(firebase), 'admins')
+    );
+    try {
+      // Check if the provided email exists in the `admins` collection
+      const isAdmin = value && value.docs.some
+      ((doc) => doc.data().email === values.email);
+      if (!isAdmin) {
+        // If the email does not exist in the `admins` collection, the user is not an admin
+        return 'You are not an admin.';
+      }
 
-   } catch (err) {
-     console.log(`Error: ${err}`)
+      // If the email exists in the `admins` collection, sign in the user
+      const data = await signInWithEmailAndPassword(auth, values.email, values.password);
+      if (data) {
+        const token = await data.user.getIdToken();
+        localStorage.setItem('authToken', token);
+        console.log(`Login token: ${token}`);
+        router.push('/');
+      }
+    } catch (err) {
+      console.log(`Error: ${err}`);
+    }
+  };
 
-   }
-
-
-}
 
 
 return (
