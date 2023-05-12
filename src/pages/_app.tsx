@@ -23,7 +23,7 @@ import { SettingsConsumer, SettingsProvider } from 'src/@core/context/settingsCo
 
 // ** Utils Imports
 import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
-import { AuthProvider } from "./auth";
+import { AuthProvider } from "../configs/auth";
 
 // ** React Perfect Scrollbar Style
 import 'react-perfect-scrollbar/dist/css/styles.css'
