@@ -48,13 +48,25 @@ const OrdersPage = () => {
     collection(getFirestore(firebase), 'orders')
   );
   useEffect(() => {
-    console.log(`SearchTarget is in useEffect ${searchTarget}`)
     if (value) {
-      const data = value.docs.map((doc) => doc.data());
-      const filtered = data.filter((item) =>
-        item[searchTarget].toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const data = value.docs.map((doc) => {
+        console.log(`But data has ${doc.id}`);
+        return {
+          myID: doc.id,
+          ...doc.data(),
+        };
+      });
+
+      data.map((d) => console.log(`Data has ${JSON.stringify(d.myID)}`));
+
+      const filtered = data.filter((item) => {
+        console.log(`Item ID is ${item.myID}`);
+        const { myID, ...rest } = item; // Destructure `myID` from `item`
+        return rest[searchTarget].toLowerCase().includes(searchQuery.toLowerCase());
+      });
+
       const newData = filtered.map((item) => {
+        console.log(`Item ID is ${item.myID}`);
         const { firstName, lastName, orderStatus, isCollected, ...rest } = item;
         const name = `${firstName} ${lastName}`;
         const status = orderStatus === 'accepted' ? 'accepted' : 'rejected';
@@ -69,12 +81,15 @@ const OrdersPage = () => {
           totalPrice: rest.totalPrice,
           collectionDate: rest.collectionDate,
           ...rest,
-          id: item.id
-        }
+          id: item.myID, // Use `myID` instead of `id`
+        };
       });
+
+      newData.map((d) => console.log(`Item ID: ${d.id}`));
       setFilteredData(newData);
     }
   }, [value, searchQuery, searchTarget]);
+
 
   console.log(`Filtered data is: ${JSON.stringify(filteredData)}`)
   const handleChangeSearchTarget = (event) => {
@@ -178,18 +193,18 @@ const OrdersPage = () => {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Order Status</TableCell>
               <TableCell>Is Collected</TableCell>
               <TableCell>Item Number</TableCell>
               <TableCell>Form Type</TableCell>
               <TableCell>Installment Amount</TableCell>
               <TableCell>Total Price</TableCell>
               <TableCell>Collection Date</TableCell>
+              <TableCell>Order Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredData.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow onClick={() => router.push(`/pages/orders/${row.id}`) } key={row.id}>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.isCollected ? 'Yes' : 'No'}</TableCell>
                 <TableCell>{row.itemNum}</TableCell>
