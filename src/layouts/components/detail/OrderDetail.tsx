@@ -206,12 +206,6 @@ const DetailOrder = (props) => {
           </Alert>
         </Snackbar>
         <Snackbar
-          open={rejectToastOpen}
-          autoHideDuration={6000}
-          onClose={handleRejectToastClose}
-          message="Order rejected successfully!"
-        />
-        <Snackbar
           open={isErrorToastOpen}
           autoHideDuration={6000}
           onClose={() => setIsErrorToastOpen(false)}

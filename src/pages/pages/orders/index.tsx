@@ -20,6 +20,13 @@ import {useRouter} from "next/router";
 import PrivateRoute from "../../privateRoute";
 import exportDataToExcel from "../../../configs/exportToExcel";
 import Button from "@mui/material/Button";
+import {useEffect, useState} from "react";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 interface StatusObj {
   [key: string]: {
@@ -34,9 +41,51 @@ const statusObj: StatusObj = {
 
 const OrdersPage = () => {
   const router = useRouter()
+  const [searchTarget, setSearchTarget] = useState('nrc');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
   const [value, loading, error] = useCollection(
     collection(getFirestore(firebase), 'orders')
   );
+  useEffect(() => {
+    console.log(`SearchTarget is in useEffect ${searchTarget}`)
+    if (value) {
+      const data = value.docs.map((doc) => doc.data());
+      const filtered = data.filter((item) =>
+        item[searchTarget].toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      const newData = filtered.map((item) => {
+        const { firstName, lastName, orderStatus, isCollected, ...rest } = item;
+        const name = `${firstName} ${lastName}`;
+        const status = orderStatus === 'accepted' ? 'accepted' : 'rejected';
+        return {
+          name,
+          status,
+          orderStatus,
+          isCollected,
+          itemNum: rest.itemNum,
+          formType: rest.formType,
+          installmentAmount: rest.installmentAmount,
+          totalPrice: rest.totalPrice,
+          collectionDate: rest.collectionDate,
+          ...rest,
+          id: item.id
+        }
+      });
+      setFilteredData(newData);
+    }
+  }, [value, searchQuery, searchTarget]);
+
+  console.log(`Filtered data is: ${JSON.stringify(filteredData)}`)
+  const handleChangeSearchTarget = (event) => {
+    console.log(`search target value: ${event.target.value}`)
+    setSearchTarget(event.target.value);
+    console.log(`search target value after: ${searchTarget}`)
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
 
   const handleExportClick = () => {
     if (value) {
@@ -94,47 +143,62 @@ const OrdersPage = () => {
 
   return (
     <PrivateRoute>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
-        <Button variant='contained' onClick={handleExportClick}>
-          Export to Excel
-        </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel id="search-target-label">Search By</InputLabel>
+          <Select
+            labelId="search-target-label"
+            id="search-target"
+            value={searchTarget}
+            label="Search By"
+            onChange={handleChangeSearchTarget}
+          >
+            <MenuItem value="nrc">NRC</MenuItem>
+            <MenuItem value="collectionDate">Collection Date</MenuItem>
+            <MenuItem value="employeeNumber">Employee Number</MenuItem>
+            <MenuItem value="firstName">First Name</MenuItem>
+            <MenuItem value="lastName">Last Name</MenuItem>
+          </Select>
+        </FormControl>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <TextField
+            id="search-query"
+            label="Search"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          <Button variant='contained' onClick={handleExportClick}>
+            Export to Excel
+          </Button>
+        </Box>
       </Box>
     <Card>
       <TableContainer>
-        <Table sx={{ minWidth: 800 }} aria-label='table in dashboard'>
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Number Of Items</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Amount</TableCell>
+              <TableCell>Order Status</TableCell>
+              <TableCell>Is Collected</TableCell>
+              <TableCell>Item Number</TableCell>
               <TableCell>Form Type</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Installment Amount</TableCell>
+              <TableCell>Total Price</TableCell>
+              <TableCell>Collection Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {newData.map((row) => (
-              <TableRow onClick={() => router.push(`/pages/orders/${row.id}`) } hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
-                <TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Typography sx={{ fontWeight: 500, fontSize: '0.875rem !important' }}>{row.name}</Typography>
-                  </Box>
-                </TableCell>
+            {filteredData.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.isCollected ? 'Yes' : 'No'}</TableCell>
                 <TableCell>{row.itemNum}</TableCell>
-                <TableCell>{row.collectionDate}</TableCell>
-                <TableCell>{row.totalPrice}</TableCell>
                 <TableCell>{row.formType}</TableCell>
+                <TableCell>{row.installmentAmount}</TableCell>
+                <TableCell>{row.totalPrice}</TableCell>
+                <TableCell>{row.collectionDate}</TableCell>
                 <TableCell>
-                  <Chip
-                    label={row.status}
-                    color={statusObj[row.status].color}
-                    sx={{
-                      height: 24,
-                      fontSize: '0.75rem',
-                      textTransform: 'capitalize',
-                      '& .MuiChip-label': { fontWeight: 500 }
-                    }}
-                  />
+                  <Chip label={row.orderStatus} color={statusObj[row.status].color} />
                 </TableCell>
               </TableRow>
             ))}
