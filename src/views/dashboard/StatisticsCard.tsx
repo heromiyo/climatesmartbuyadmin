@@ -22,13 +22,15 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import {useCollection} from "react-firebase-hooks/firestore";
 import {collection, getFirestore} from "firebase/firestore";
 import firebase from "../../firebase/config";
+import {useRouter} from "next/router";
 
 
 interface DataType {
   stats: number | undefined
   title: string
   color: ThemeColor
-  icon: ReactElement
+  icon: ReactElement,
+  route: string
 }
 
 const RenderStats = () => {
@@ -49,21 +51,27 @@ const RenderStats = () => {
       stats: usersValue?.size,
       title: 'Agents',
       color: 'primary',
-      icon: <AccountOutline sx={{ fontSize: '1.75rem' }} />
+      icon: <AccountOutline sx={{ fontSize: '1.75rem' }} />,
+      route: '/pages/agents'
     },
     {
       stats: ordersValue?.size,
       title: 'Orders',
       color: 'success',
-      icon: <TrendingUp sx={{ fontSize: '1.75rem' }} />
+      icon: <TrendingUp sx={{ fontSize: '1.75rem' }} />,
+      route: '/pages/orders'
+
     },
     {
       stats: customersValue?.size,
       color: 'warning',
       title: 'Customers',
-      icon: <NaturePeople sx={{ fontSize: '1.75rem' }} />
+      icon: <NaturePeople sx={{ fontSize: '1.75rem' }} />,
+      route: '/pages/customers'
     }
   ];
+
+  const router = useRouter()
 
   if (usersLoading || ordersLoading || customersLoading) {
     return 'Loading...';
@@ -82,7 +90,7 @@ const RenderStats = () => {
 
   return statsData.map((item: DataType, index: number) => (
     <Grid item xs={12} sm={3} key={index}>
-      <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box onClick={() => router.push(`${item.route}`)} key={index} sx={{ display: 'flex', alignItems: 'center' }}>
         <Avatar
           variant='rounded'
           sx={{

@@ -19,6 +19,7 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard, { CardProps } from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
+import { Alert } from '@mui/material';
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
 
 // ** Icons Imports
@@ -69,16 +70,14 @@ const LoginPage = () => {
   const [values, setValues] = useState<State>({
     password: '',
     email: '',
-    showPassword: false
-  })
-const auth = getAuth(firebase)
+    showPassword: false,
 
-  // const [
-  //   signInWithEmailAndPassword,
-  //   user,
-  //   loading,
-  //   error,
-  // ] = useSignInWithEmailAndPassword(auth)
+  })
+  const [loginError, setLoginError] = useState('');
+const auth = getAuth(firebase)
+  const [admins, loading, error] = useCollection(
+    collection(getFirestore(firebase), 'admins')
+  );
 
 
   // ** Hook
@@ -97,21 +96,18 @@ const auth = getAuth(firebase)
     event.preventDefault()
   }
   const handleLogin = async (values) => {
-    // const [value, loading, error] = useCollection(
-    //   collection(getFirestore(firebase), 'admins')
-    // );
     try {
-      // Check if the provided email exists in the `admins` collection
-      // const isAdmin = value && value.docs.some
-      // ((doc) => doc.data().email === values.email);
-      // if (!isAdmin) {
-      //   // If the email does not exist in the `admins` collection, the user is not an admin
-      //   return 'You are not an admin.';
-      // }
+     // Check if the provided email exists in the `admins` collection
+      const isAdmin = admins && admins.docs.some
+      ((doc) => doc.data().email === values.email);
+      if (!isAdmin) {
+        // If the email does not exist in the `admins` collection, the user is not an admin
+        setLoginError(`You are not an admin`)
+      }
 
       // If the email exists in the `admins` collection, sign in the user
       const data = await signInWithEmailAndPassword(auth, values.email, values.password);
-      if (data) {
+      if (data && isAdmin) {
         const token = await data.user.getIdToken();
         localStorage.setItem('authToken', token);
         console.log(`Login token: ${token}`);
@@ -119,6 +115,7 @@ const auth = getAuth(firebase)
       }
     } catch (err) {
       console.log(`Error: ${err}`);
+      setLoginError(`Invalid email or password`)
     }
   };
 
@@ -206,6 +203,16 @@ return (
               Welcome to {themeConfig.templateName}! 👋🏻
             </Typography>
             <Typography variant='body2'>Please sign-in to the dashboard</Typography>
+          </Box>
+          <Box>
+            <Typography variant='h5' sx={{ mb: 3 }}>
+              Login
+            </Typography>
+            {loginError && (
+              <Alert severity='error' sx={{ mb: 3 }}>
+                {loginError}
+              </Alert>
+            )}
           </Box>
           <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
             <TextField autoFocus   onChange={handleChange('email')}
