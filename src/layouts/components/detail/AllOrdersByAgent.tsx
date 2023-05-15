@@ -13,11 +13,11 @@ import TableContainer from '@mui/material/TableContainer'
 // ** Types Imports
 import { ThemeColor } from 'src/@core/layouts/types'
 
-import { getFirestore, collection } from 'firebase/firestore';
+import {getFirestore, collection, where, query} from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import firebase from '../../../firebase/config'
 import {useRouter} from "next/router";
-import PrivateRoute from "../../privateRoute";
+import PrivateRoute from "../../../pages/privateRoute";
 import exportDataToExcel from "../../../configs/exportToExcel";
 import Button from "@mui/material/Button";
 import {useEffect, useState} from "react";
@@ -39,13 +39,17 @@ const statusObj: StatusObj = {
   accepted: { color: 'success' }
 }
 
-const OrdersPage = (props) => {
+const AllOrdersByAgent = (props) => {
+  console.log(`In AllOrdersByAgent: ${JSON.stringify(props)}`)
   const router = useRouter()
   const [searchTarget, setSearchTarget] = useState('nrc');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [value, loading, error] = useCollection(
-    collection(getFirestore(firebase), 'orders')
+    query(
+      collection(getFirestore(firebase), 'orders'),
+      where('createdBy', '==', props.value.agentID)
+    )
   );
   useEffect(() => {
     if (value) {
@@ -187,42 +191,42 @@ const OrdersPage = (props) => {
           </Button>
         </Box>
       </Box>
-    <Card>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Is Collected</TableCell>
-              <TableCell>Item Number</TableCell>
-              <TableCell>Form Type</TableCell>
-              <TableCell>Installment Amount</TableCell>
-              <TableCell>Total Price</TableCell>
-              <TableCell>Collection Date</TableCell>
-              <TableCell>Order Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredData.map((row) => (
-              <TableRow onClick={() => router.push(`/pages/orders/${row.id}`) } key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.isCollected ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{row.itemNum}</TableCell>
-                <TableCell>{row.formType}</TableCell>
-                <TableCell>{row.installmentAmount}</TableCell>
-                <TableCell>{row.totalPrice}</TableCell>
-                <TableCell>{row.collectionDate}</TableCell>
-                <TableCell>
-                  <Chip label={row.orderStatus} color={statusObj[row.status].color} />
-                </TableCell>
+      <Card>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Is Collected</TableCell>
+                <TableCell>Item Number</TableCell>
+                <TableCell>Form Type</TableCell>
+                <TableCell>Installment Amount</TableCell>
+                <TableCell>Total Price</TableCell>
+                <TableCell>Collection Date</TableCell>
+                <TableCell>Order Status</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Card>
+            </TableHead>
+            <TableBody>
+              {filteredData.map((row) => (
+                <TableRow onClick={() => router.push(`/pages/orders/${row.id}`) } key={row.id}>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.isCollected ? 'Yes' : 'No'}</TableCell>
+                  <TableCell>{row.itemNum}</TableCell>
+                  <TableCell>{row.formType}</TableCell>
+                  <TableCell>{row.installmentAmount}</TableCell>
+                  <TableCell>{row.totalPrice}</TableCell>
+                  <TableCell>{row.collectionDate}</TableCell>
+                  <TableCell>
+                    <Chip label={row.orderStatus} color={statusObj[row.status].color} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
     </PrivateRoute>
   )
 }
 
-export default OrdersPage
+export default AllOrdersByAgent

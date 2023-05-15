@@ -3,6 +3,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import { styled, useTheme } from '@mui/material/styles';
+import AllOrdersByAgent from "./AllOrdersByAgent";
+import {useState} from "react";
+import AllCustomersByAgent from "./AllCustomersByAgent";
 
 // Styled component for the triangle shaped background image
 const TriangleImg = styled('img')({
@@ -23,10 +26,28 @@ const DetailAgentImg = styled('img')({
 const DetailAgent = (props) => {
   console.log(`Props: ${JSON.stringify(props)}`);
 
+
   // ** Hook
   const theme = useTheme();
+  const [isNavToDetail, setIsNavToDetail] = useState(false)
+  const [isNavToCusDetail, setIsNavToCusDetail] = useState(false)
   const dateJoined = new Date(props.value.dateJoined.seconds * 1000 + props.value.dateJoined.nanoseconds / 1000000).toLocaleDateString();
   const imageSrc = theme.palette.mode === 'light' ? 'triangle-light.png' : 'triangle-dark.png';
+
+  const handleNavToDetail = () => {
+    setIsNavToDetail(true)
+  }
+  const handleIsNavToCusDetail = () => {
+    setIsNavToCusDetail(true)
+  }
+  if (isNavToDetail) {
+    return <AllOrdersByAgent {...props}/>
+  }
+
+  if (isNavToCusDetail) {
+    return <AllCustomersByAgent {...props}/>
+  }
+
 
   return (
     <Card sx={{ position: 'relative' }}>
@@ -44,12 +65,13 @@ const DetailAgent = (props) => {
         <Typography variant='body2' sx={{ letterSpacing: '0.25px' }}>
           { `Date joined: ${dateJoined}` }
         </Typography>
-        <Typography variant='h5' sx={{ my: 4, color: 'primary.main' }}>
+        <Button variant='contained' color='primary' onClick={handleNavToDetail} sx={{ marginRight: '8px' }}>
           {`${props.value.orderCount} Orders`}
-        </Typography>
-        <Typography variant='h5' sx={{ my: 4, color: 'primary.main' }}>
+        </Button>
+        <Button variant='contained' color='primary' onClick={handleIsNavToCusDetail}>
           {`${props.value.customerCount} Customers`}
-        </Typography>
+        </Button>
+
       </CardContent>
     </Card>
   );

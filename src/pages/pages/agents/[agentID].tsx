@@ -64,8 +64,10 @@ const AgentDetails = () => {
     return `Error: ${error}`
   }
 
-  const newData = null;
-  console.log(value?.data())
+ const mergedData = {
+    ...value?.data(),
+   agentID
+ }
 
 
   return (
@@ -73,7 +75,7 @@ const AgentDetails = () => {
     <ApexChartWrapper>
       <Grid container spacing={6}>
         <Grid item xs={12} md={12}>
-          <DetailAgent value={value.data()} />
+          <DetailAgent value={mergedData} />
         </Grid>
 
       </Grid>
