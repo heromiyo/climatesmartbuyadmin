@@ -57,10 +57,8 @@ const OrdersPage = (props) => {
         };
       });
 
-      data.map((d) => console.log(`Data has ${JSON.stringify(d.myID)}`));
 
       const filtered = data.filter((item) => {
-        console.log(`Item ID is ${item.myID}`);
         const { myID, ...rest } = item; // Destructure `myID` from `item`
         return rest[searchTarget].toLowerCase().includes(searchQuery.toLowerCase());
       });
@@ -85,7 +83,6 @@ const OrdersPage = (props) => {
         };
       });
 
-      newData.map((d) => console.log(`Item ID: ${d.id}`));
       setFilteredData(newData);
     }
   }, [value, searchQuery, searchTarget]);
@@ -182,10 +179,10 @@ const OrdersPage = (props) => {
             value={searchQuery}
             onChange={handleSearchChange}
           />
-          <Button variant='contained' onClick={handleExportClick}>
-            Export to Excel
-          </Button>
         </Box>
+        <Button variant='contained' onClick={handleExportClick}>
+          Export to Excel
+        </Button>
       </Box>
     <Card>
       <TableContainer>
