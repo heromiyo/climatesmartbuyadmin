@@ -106,7 +106,7 @@ const CustomersPage = () => {
         const name = `${firstName} ${lastName}`;
 
         return {
-          myID: item.myID, // Access myID as item.myID
+          myID: item.myID,
           name,
           firstName,
           lastName,
@@ -126,9 +126,16 @@ const CustomersPage = () => {
         };
       });
 
-      setFilteredData(newData);
+      const sortedData = newData.sort((a, b) => {
+        const dateA = a.timeStamp.toDate();
+        const dateB = b.timeStamp.toDate();
+        return dateB - dateA;
+      });
+
+      setFilteredData(sortedData);
     }
   }, [value, searchQuery, searchTarget]);
+
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;

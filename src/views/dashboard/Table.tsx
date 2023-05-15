@@ -17,6 +17,8 @@ import { getFirestore, collection } from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import firebase from '../../firebase/config'
 import {useRouter} from "next/router";
+import {useState} from "react";
+import {Pagination} from "@mui/lab";
 
 interface RowType {
   name: string
@@ -38,12 +40,14 @@ const rows: RowType[] = [
 ]
 
 const statusObj: StatusObj = {
-  applied: { color: 'info' },
+  pending: { color: 'info' },
   rejected: { color: 'error' },
   accepted: { color: 'success' }
 }
 
 const DashboardTable = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 3;
   const router = useRouter()
   const [value, loading, error] = useCollection(
     collection(getFirestore(firebase), 'orders')
@@ -72,7 +76,7 @@ const DashboardTable = () => {
       ...rest
     } = data;
     const name = `${firstName} ${lastName}`;
-    const status = orderStatus === 'accepted' ? 'accepted' : 'rejected';
+    const status = orderStatus === 'accepted' ? 'accepted' : orderStatus === 'rejected' ? 'rejected' : 'pending';
     newData.push({
       name,
       status,
@@ -91,19 +95,24 @@ const DashboardTable = () => {
   const sortedData = newData
     .map((data, index) => ({ ...data, index }))
     .sort((a, b) => {
-      const dateA = new Date(a.collectionDate);
-      const dateB = new Date(b.collectionDate);
-      return dateB.getTime() - dateA.getTime() || a.index - b.index;
+      const timestampA = a.timeStamp.seconds;
+      const timestampB = b.timeStamp.seconds;
+      return timestampB - timestampA || a.index - b.index;
     })
     .map(({ id, index, ...rest }) => ({ id, ...rest }));
 
   const latestData = sortedData
-    .slice(0, 15)
     .map(({ id, ...rest }) => ({ id, ...rest }));
 
   latestData.map((d) => console.log(`Latest id is ${JSON.stringify(d)}`))
 
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = latestData.slice(indexOfFirstOrder, indexOfLastOrder);
 
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+  };
 
   if (loading) {
   return 'loading...'
@@ -131,7 +140,7 @@ if (error) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {latestData.map((row) => (
+            {currentOrders.map((row) => (
               <TableRow onClick={() => router.push(`/pages/orders/${row.id}`) } hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
                 <TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -159,6 +168,15 @@ if (error) {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* Pagination component */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <Pagination
+          count={Math.ceil(latestData.length / ordersPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </Box>
     </Card>
   )
 }

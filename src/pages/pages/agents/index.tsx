@@ -112,9 +112,16 @@ const AgentsPage = () => {
         };
       });
 
-      setFilteredData(newData);
+      const sortedData = newData.sort((a, b) => {
+        const dateA = a.dateJoined.toDate();
+        const dateB = b.dateJoined.toDate();
+        return dateB.getTime() - dateA.getTime();
+      });
+
+      setFilteredData(sortedData);
     }
   }, [value, searchQuery, searchTarget]);
+
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -211,6 +218,7 @@ const AgentsPage = () => {
             <MenuItem value="lastName">Last Name</MenuItem>
             <MenuItem value="district">District</MenuItem>
 
+
           </Select>
         </FormControl>
         <TextField
@@ -232,6 +240,7 @@ const AgentsPage = () => {
               <TableCell>Name</TableCell>
               <TableCell>District</TableCell>
               <TableCell>Phone Number</TableCell>
+              <TableCell>Date Joined</TableCell>
             </TableRow>
           </TableHead>
           <TableBody >
@@ -246,6 +255,7 @@ const AgentsPage = () => {
                 </TableCell>
                 <TableCell>{row.district}</TableCell>
                 <TableCell>{row.phoneNumber}</TableCell>
+                <TableCell>{`${new Date(row.dateJoined.seconds * 1000 + row.dateJoined.nanoseconds / 1000000).toLocaleDateString()}`}</TableCell>
               </TableRow>
             ))}
           </TableBody>

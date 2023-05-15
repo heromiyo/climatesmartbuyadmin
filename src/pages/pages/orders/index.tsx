@@ -60,7 +60,6 @@ const OrdersPage = (props) => {
         };
       });
 
-
       const filtered = data.filter((item) => {
         const { myID, ...rest } = item; // Destructure `myID` from `item`
         return rest[searchTarget].toLowerCase().includes(searchQuery.toLowerCase());
@@ -86,9 +85,17 @@ const OrdersPage = (props) => {
         };
       });
 
-      setFilteredData(newData);
+      const sortedData = newData
+        .sort((a, b) => {
+          const timestampA = a.timeStamp.seconds;
+          const timestampB = b.timeStamp.seconds;
+          return timestampB - timestampA;
+        });
+
+      setFilteredData(sortedData);
     }
   }, [value, searchQuery, searchTarget]);
+
 
 
   console.log(`Filtered data is: ${JSON.stringify(filteredData)}`)
