@@ -13,7 +13,7 @@ import TableContainer from '@mui/material/TableContainer'
 // ** Types Imports
 import { ThemeColor } from 'src/@core/layouts/types'
 
-import { getFirestore, collection } from 'firebase/firestore';
+import {getFirestore, collection, getDoc, doc} from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import firebase from '../../../firebase/config'
 import {useRouter} from "next/router";
@@ -28,6 +28,7 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import {Pagination} from "@mui/lab";
+import {CircularProgress} from "@mui/material";
 
 interface StatusObj {
   [key: string]: {
@@ -116,12 +117,48 @@ const OrdersPage = (props) => {
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
   };
-  const handleExportClick = () => {
+
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportClick = async () => {
     if (value) {
-      const data = value.docs.map((doc) => doc.data());
+      setExporting(true);
+
+      const data = [];
+
+      // Iterate through each document in the value array
+      for (const docSnapshot of value.docs) {
+        const orderData = docSnapshot.data();
+
+        // Fetch the user document from the "users" collection using createdBy
+        const userDocRef = doc(getFirestore(firebase), 'users', orderData.createdBy);
+        const userDocSnapshot = await getDoc(userDocRef);
+        const userData = userDocSnapshot.data();
+
+        // Add the agent property to the orderData object
+        orderData.agent = {
+          firstName: userData?.firstName || '',
+          lastName: userData?.lastName || '',
+        };
+
+        data.push(orderData);
+      }
+
       exportDataToExcel(data, 'orders', 'output.xlsx');
+
+      setExporting(false);
     }
   };
+
+
+
+
+
+
+
+
+
+
   const newData: {
     id: string;
     name: string;
@@ -197,8 +234,9 @@ const OrdersPage = (props) => {
             onChange={handleSearchChange}
           />
         </Box>
-        <Button variant='contained' onClick={handleExportClick}>
-          Export to Excel
+        <Button variant="contained" onClick={handleExportClick} disabled={exporting}>
+          {exporting ? 'Exporting data...' : 'Export to Excel'}
+          {exporting && <CircularProgress size={20} style={{ marginLeft: '10px' }} />}
         </Button>
       </Box>
     <Card>
