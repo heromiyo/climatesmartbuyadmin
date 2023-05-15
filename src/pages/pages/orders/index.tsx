@@ -27,6 +27,7 @@ import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import {Pagination} from "@mui/lab";
 
 interface StatusObj {
   [key: string]: {
@@ -40,6 +41,8 @@ const statusObj: StatusObj = {
 }
 
 const OrdersPage = (props) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
   const router = useRouter()
   const [searchTarget, setSearchTarget] = useState('nrc');
   const [searchQuery, setSearchQuery] = useState('');
@@ -99,6 +102,13 @@ const OrdersPage = (props) => {
     setSearchQuery(event.target.value);
   };
 
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredData.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+  };
   const handleExportClick = () => {
     if (value) {
       const data = value.docs.map((doc) => doc.data());
@@ -200,7 +210,7 @@ const OrdersPage = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData.map((row) => (
+            {currentOrders.map((row) => (
               <TableRow onClick={() => router.push(`/pages/orders/${row.id}`) } key={row.id}>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.isCollected ? 'Yes' : 'No'}</TableCell>
@@ -218,6 +228,15 @@ const OrdersPage = (props) => {
         </Table>
       </TableContainer>
     </Card>
+      {/* Pagination component */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <Pagination
+          count={Math.ceil(filteredData.length / ordersPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </Box>
     </PrivateRoute>
   )
 }

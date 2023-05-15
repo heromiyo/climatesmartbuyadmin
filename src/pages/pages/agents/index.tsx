@@ -29,6 +29,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import {Pagination} from "@mui/lab";
 
 interface RowType {
   name: string
@@ -55,6 +56,8 @@ const statusObj: StatusObj = {
 
 
 const AgentsPage = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
   const router = useRouter()
   const [searchTarget, setSearchTarget] = useState('firstName');
   const [searchQuery, setSearchQuery] = useState('');
@@ -113,6 +116,12 @@ const AgentsPage = () => {
     }
   }, [value, searchQuery, searchTarget]);
 
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredData.slice(indexOfFirstOrder, indexOfLastOrder);
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+  };
   const handleChangeSearchTarget = (event) => {
     setSearchTarget(event.target.value);
   };
@@ -226,7 +235,7 @@ const AgentsPage = () => {
             </TableRow>
           </TableHead>
           <TableBody >
-            {filteredData.map((row) => (
+            {currentOrders.map((row) => (
               <TableRow onClick={() => router.push(`/pages/agents/${row.id}`)} hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
                 <TableCell
                   sx={{ py: theme => `${theme.spacing(0.5)} !important` }}
@@ -243,6 +252,15 @@ const AgentsPage = () => {
         </Table>
       </TableContainer>
     </Card>
+      {/* Pagination component */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <Pagination
+          count={Math.ceil(filteredData.length / ordersPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </Box>
     </PrivateRoute>
   )
 }

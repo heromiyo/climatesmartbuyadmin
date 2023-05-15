@@ -1,5 +1,7 @@
 // ** React Imports
 import { ChangeEvent, MouseEvent, useState } from 'react'
+import firebase from '../../firebase/config'
+import { getAuth, reauthenticateWithCredential, updatePassword, EmailAuthProvider } from 'firebase/auth';
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,6 +22,7 @@ import EyeOutline from 'mdi-material-ui/EyeOutline'
 import KeyOutline from 'mdi-material-ui/KeyOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
+import {Snackbar} from "@mui/material";
 
 interface State {
   newPassword: string
@@ -73,6 +76,32 @@ const TabSecurity = () => {
   const handleMouseDownConfirmNewPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
   }
+
+  const [error, setError] = useState(null);
+  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+  const handleSuccessSnackbarClose = () => {
+    setSuccessSnackbarOpen(false);
+  };
+  const handleResetPassword = async () => {
+    try {
+      const auth = getAuth(firebase);
+      const user = auth.currentUser;
+      if (user) {
+        const credential = EmailAuthProvider.credential(user.email, values.currentPassword);
+        await reauthenticateWithCredential(user, credential);
+        await updatePassword(user, values.newPassword);
+        console.log('Password updated successfully');
+        setSuccessSnackbarOpen(true);
+        // Reset form fields
+        setValues({ ...values, currentPassword: '', newPassword: '', confirmNewPassword: '' });
+        setError(null);
+      }
+    } catch (error) {
+      console.log('Error updating password:', error);
+      setError(`Error updating password`)
+    }
+  };
+
 
   return (
     <form>
@@ -174,17 +203,27 @@ const TabSecurity = () => {
 
 
         <Box sx={{ mt: 11 }}>
-          <Button variant='contained' sx={{ marginRight: 3.5 }}>
+          <Button onClick={handleResetPassword} variant='contained' sx={{ marginRight: 3.5 }}>
             Save Changes
           </Button>
           <Button
             type='reset'
             variant='outlined'
             color='secondary'
-            onClick={() => setValues({ ...values, currentPassword: '', newPassword: '', confirmNewPassword: '' })}
+            onClick={() => {
+              setValues({ ...values, currentPassword: '', newPassword: '', confirmNewPassword: '' });
+              setError(null); // Clear the error message when resetting the form
+            }}
           >
             Reset
           </Button>
+          {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display the error message */}
+          <Snackbar
+            open={successSnackbarOpen}
+            autoHideDuration={3000}
+            onClose={handleSuccessSnackbarClose}
+            message="Password updated successfully"
+          />
         </Box>
       </CardContent>
     </form>

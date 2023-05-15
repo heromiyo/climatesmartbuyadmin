@@ -26,6 +26,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import {Pagination} from "@mui/lab";
 
 interface RowType {
   name: string
@@ -52,6 +53,9 @@ const statusObj: StatusObj = {
 
 const CustomersPage = () => {
   const router = useRouter()
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
   const [searchTarget, setSearchTarget] = useState('nrc');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
@@ -126,6 +130,13 @@ const CustomersPage = () => {
     }
   }, [value, searchQuery, searchTarget]);
 
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredData.slice(indexOfFirstOrder, indexOfLastOrder);
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+  };
+
 
 
   const handleChangeSearchTarget = (event) => {
@@ -195,7 +206,7 @@ const CustomersPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData.map((row) => (
+              {currentOrders.map((row) => (
                 <TableRow
                   onClick={() => router.push(`/pages/customers/${row.myID}`)}
                   hover
@@ -218,6 +229,15 @@ const CustomersPage = () => {
           </Table>
         </TableContainer>
       </Card>
+      {/* Pagination component */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <Pagination
+          count={Math.ceil(filteredData.length / ordersPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </Box>
     </PrivateRoute>
 
   )
