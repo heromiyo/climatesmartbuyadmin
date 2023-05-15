@@ -144,7 +144,7 @@ const OrdersPage = (props) => {
         data.push(orderData);
       }
 
-      exportDataToExcel(data, 'orders', 'output.xlsx');
+      exportDataToExcel(data, 'orders', 'output.xlsx', 'orders');
 
       setExporting(false);
     }

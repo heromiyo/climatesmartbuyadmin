@@ -66,7 +66,7 @@ const CustomersPage = () => {
   const handleExportClick = () => {
     if (value) {
       const data = value.docs.map((doc) => doc.data());
-      exportDataToExcel(data, 'customers', 'output.xlsx');
+      exportDataToExcel(data, 'customers', 'output.xlsx', 'customers');
     }
   };
 
