@@ -16,6 +16,8 @@ import CardMedia from "@mui/material/CardMedia";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import firebase from '../../../firebase/config'
+import {TransformComponent, TransformWrapper} from "react-zoom-pan-pinch";
+import OrderDetailEdit from "./OrderDetailEdit";
 
 
 
@@ -69,7 +71,7 @@ const DetailOrder = (props) => {
     setIsEditing(true);
   };
   if (isEditing) {
-   // return <CustomerDetailEdit {...props}  />;
+    return <OrderDetailEdit {...props}  />;
   }
 
   return (
@@ -97,7 +99,7 @@ const DetailOrder = (props) => {
                 Reject Order
               </Button>
             )}
-            <Button variant='contained' sx={{ marginRight: 3.5 }}>
+            <Button onClick={handleEdit} variant='contained' sx={{ marginRight: 3.5 }}>
               Edit Order
             </Button>
           </Grid>
@@ -178,22 +180,29 @@ const DetailOrder = (props) => {
             <Typography>{props.value.employeeNumber}</Typography>
           </Grid>
 
-          <Grid container spacing={6}>
-            <Grid item xs={12}>
-              <Typography variant="subtitle1">Attachments</Typography>
-            </Grid>
-            {props.value.attachments.map((attachment, index) => (
-              <Grid item xs={6} sm={4} md={3} key={index}>
-                <Card>
-                  <CardMedia
-                    component="img"
-                    image={attachment} // assuming you have an `url` field in your attachment object
-                    alt={`Attachment ${index}`}
-                  />
-                </Card>
+          <TransformWrapper>
+            <TransformComponent>
+              <Grid container spacing={6}>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Attachments</Typography>
+                </Grid>
+                {props.value.attachments.map((attachment, index) => (
+                  <Grid item xs={6} sm={4} md={3} key={index}>
+                    <Card>
+                      <TransformComponent>
+                        <CardMedia
+                          component="img"
+                          image={attachment} // assuming you have an `url` field in your attachment object
+                          alt={`Attachment ${index}`}
+                        />
+                      </TransformComponent>
+                    </Card>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            </TransformComponent>
+          </TransformWrapper>
+
 
         </Grid>
         <Snackbar

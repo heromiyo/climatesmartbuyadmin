@@ -4720,7 +4720,7 @@
     "react-onclickoutside" "^6.12.0"
     "react-popper" "^2.2.5"
 
-"react-dom@^15.5.x || ^16.x || ^17.x", "react-dom@^16.9.0 || ^17", "react-dom@^17.0.0", "react-dom@^17.0.2", "react-dom@^17.0.2 || ^18.0.0", "react-dom@>=16.3.3", "react-dom@>=16.6.0", "react-dom@17.0.2":
+"react-dom@*", "react-dom@^15.5.x || ^16.x || ^17.x", "react-dom@^16.9.0 || ^17", "react-dom@^17.0.0", "react-dom@^17.0.2", "react-dom@^17.0.2 || ^18.0.0", "react-dom@>=16.3.3", "react-dom@>=16.6.0", "react-dom@17.0.2":
   "integrity" "sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA=="
   "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-17.0.2.tgz"
   "version" "17.0.2"
@@ -4797,7 +4797,12 @@
     "loose-envify" "^1.4.0"
     "prop-types" "^15.6.2"
 
-"react@^15.5.x || ^16.x || ^17.x", "react@^16 || ^17 || ^18", "react@^16.8.0 || ^17", "react@^16.8.0 || ^17.0.0", "react@^16.9.0 || ^17", "react@^17.0.0", "react@^17.0.2", "react@^17.0.2 || ^18.0.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || 18.x.x", "react@>=0.13", "react@>=16.3.3", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0", "react@17.0.2":
+"react-zoom-pan-pinch@^3.0.7":
+  "integrity" "sha512-UJkk1Z7BMPIgfY+Qu4jGTlj+UyZQhrpJeCuK1gg31x57i3p8h4ZXfYWu3dFIiR+uRgfoe/koziwgCjA//T1rKA=="
+  "resolved" "https://registry.npmjs.org/react-zoom-pan-pinch/-/react-zoom-pan-pinch-3.0.7.tgz"
+  "version" "3.0.7"
+
+"react@*", "react@^15.5.x || ^16.x || ^17.x", "react@^16 || ^17 || ^18", "react@^16.8.0 || ^17", "react@^16.8.0 || ^17.0.0", "react@^16.9.0 || ^17", "react@^17.0.0", "react@^17.0.2", "react@^17.0.2 || ^18.0.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || 18.x.x", "react@>=0.13", "react@>=16.3.3", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0", "react@17.0.2":
   "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
   "version" "17.0.2"
