@@ -45,6 +45,13 @@ const Navigation = (): VerticalNavItemsType => {
     {
       sectionTitle: 'Actions'
     },
+
+    {
+      title: 'Generate Code',
+      icon: Login,
+      path: '/pages/admin',
+      openInNewTab: false
+    },
     {
       title: 'Pending Orders',
       icon: Login,

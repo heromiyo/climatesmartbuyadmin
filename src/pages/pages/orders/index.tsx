@@ -28,7 +28,6 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import {Pagination} from "@mui/lab";
-import { Timestamp } from 'firebase/firestore';
 
 interface StatusObj {
   [key: string]: {
@@ -62,20 +61,9 @@ const OrdersPage = (props) => {
       });
 
       const filtered = data.filter((item) => {
-        const { myID, ...rest } = item;
-        console.log(`The timestamp is ${rest.timeStamp}`)
-
-        if (searchTarget === 'timeStamp') {
-          const searchDate = new Date(searchQuery);
-          console.log(`The timestamp searchDate is ${searchDate}`)
-          const searchTimestamp = Timestamp.fromDate(searchDate);
-          console.log(`The timestamp searchTimestamp is ${searchTimestamp}`)
-          return rest.timeStamp.isEqual(searchTimestamp);
-        }
-
+        const { myID, ...rest } = item; // Destructure `myID` from `item`
         return rest[searchTarget].toLowerCase().includes(searchQuery.toLowerCase());
       });
-
 
       const newData = filtered.map((item) => {
         console.log(`Item ID is ${item.myID}`);
@@ -195,7 +183,7 @@ const OrdersPage = (props) => {
             onChange={handleChangeSearchTarget}
           >
             <MenuItem value="nrc">NRC</MenuItem>
-            <MenuItem value="timeStamp">Date Created</MenuItem>
+            <MenuItem value="collectionDate">Collection Date</MenuItem>
             <MenuItem value="employeeNumber">Employee Number</MenuItem>
             <MenuItem value="firstName">First Name</MenuItem>
             <MenuItem value="lastName">Last Name</MenuItem>
