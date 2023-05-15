@@ -23,6 +23,12 @@ import { useRouter } from 'next/router'
 import PrivateRoute from "../../privateRoute";
 import exportDataToExcel from "../../../configs/exportToExcel";
 import Button from "@mui/material/Button";
+import {useEffect, useState} from "react";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 
 interface RowType {
   name: string
@@ -50,13 +56,70 @@ const statusObj: StatusObj = {
 
 const AgentsPage = () => {
   const router = useRouter()
-
-  // function handleRowClick(agentID) {
-  //   router.push(`/agents/${agentID}`) // navigate to dynamic route for employee
-  // }
+  const [searchTarget, setSearchTarget] = useState('firstName');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
   const [value, loading, error] = useCollection(
     collection(getFirestore(firebase), 'users')
   );
+  useEffect(() => {
+    if (value) {
+      const data = value.docs.map((doc) => {
+        console.log(`But data has ${doc.id}`);
+        return {
+          myID: doc.id,
+          ...doc.data(),
+        };
+      });
+
+      const filtered = data.filter((item) => {
+        const { myID, ...rest } = item;
+        return rest[searchTarget].toLowerCase().includes(searchQuery.toLowerCase());
+      });
+
+      const newData = filtered.map((item) => {
+        const {
+          id,
+          name,
+          email,
+          phoneNumber,
+          orderCount,
+          customerCount,
+          deleteCount,
+          dateJoined,
+          lastName,
+          firstName,
+          district,
+          ...rest
+        } = item;
+
+        return {
+          id: item.myID,
+          name,
+          email,
+          phoneNumber,
+          orderCount,
+          customerCount,
+          deleteCount,
+          dateJoined,
+          lastName,
+          firstName,
+          district,
+          ...rest,
+        };
+      });
+
+      setFilteredData(newData);
+    }
+  }, [value, searchQuery, searchTarget]);
+
+  const handleChangeSearchTarget = (event) => {
+    setSearchTarget(event.target.value);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
   const handleExportClick = () => {
     if (value) {
       const data = value.docs.map((doc) => doc.data());
@@ -123,8 +186,32 @@ const AgentsPage = () => {
 
   return (
     <PrivateRoute>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
-        <Button variant='contained' onClick={handleExportClick}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <FormControl sx={{ minWidth: 200, marginRight: 2 }}>
+          <InputLabel id="search-target-label">Search By</InputLabel>
+          <Select
+            labelId="search-target-label"
+            id="search-target"
+            value={searchTarget}
+            label="Search By"
+            onChange={handleChangeSearchTarget}
+          >
+
+            <MenuItem value="phoneNumber">Phone Number</MenuItem>
+            <MenuItem value="firstName">First Name</MenuItem>
+            <MenuItem value="lastName">Last Name</MenuItem>
+            <MenuItem value="district">District</MenuItem>
+
+          </Select>
+        </FormControl>
+        <TextField
+          id="search-query"
+          label="Search"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          sx={{ marginRight: 2 }}
+        />
+        <Button variant="contained" onClick={handleExportClick}>
           Export to Excel
         </Button>
       </Box>
@@ -139,7 +226,7 @@ const AgentsPage = () => {
             </TableRow>
           </TableHead>
           <TableBody >
-            {newData.map((row) => (
+            {filteredData.map((row) => (
               <TableRow onClick={() => router.push(`/pages/agents/${row.id}`)} hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
                 <TableCell
                   sx={{ py: theme => `${theme.spacing(0.5)} !important` }}
