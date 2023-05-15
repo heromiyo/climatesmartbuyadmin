@@ -34,7 +34,7 @@ interface StatusObj {
   }
 }
 const statusObj: StatusObj = {
-  applied: { color: 'info' },
+  pending: { color: 'info' },
   rejected: { color: 'error' },
   accepted: { color: 'success' }
 }
@@ -67,7 +67,7 @@ const OrdersPage = (props) => {
         console.log(`Item ID is ${item.myID}`);
         const { firstName, lastName, orderStatus, isCollected, ...rest } = item;
         const name = `${firstName} ${lastName}`;
-        const status = orderStatus === 'accepted' ? 'accepted' : 'rejected';
+        const status = orderStatus === 'accepted' ? 'accepted' : orderStatus === 'rejected' ? 'rejected' : 'pending';
         return {
           name,
           status,

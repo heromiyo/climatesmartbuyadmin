@@ -26,7 +26,7 @@ interface StatusObj {
   }
 }
 const statusObj: StatusObj = {
-  applied: { color: 'info' },
+  pending: { color: 'info' },
   rejected: { color: 'error' },
   accepted: { color: 'success' }
 }
@@ -35,17 +35,27 @@ const PendingOrdersPage = () => {
   const [value, loading, error] = useCollection(
     query(
       collection(getFirestore(firebase), 'orders'),
-      where('orderStatus', '==', 'pending')
+      where('orderStatus', 'not-in', ['accepted', 'rejected'])
     )
   );
 
   const newData: { id: string,name: string; status: string; orderStatus: any; isCollected: any; itemNum: any; formType: any; installmentAmount: any; totalPrice: any; collectionDate: any }[] = [];
 
   value?.forEach((doc) => {
+    console.log(`orderStatus is ${doc.orderStatus}`)
     const data = doc.data();
     const { firstName, lastName, orderStatus, isCollected, ...rest } = data;
     const name = `${firstName} ${lastName}`;
-    const status = orderStatus === 'accepted' ? 'accepted' : 'rejected';
+    let status;
+    if (orderStatus === 'accepted') {
+      status = 'accepted';
+    } else if (orderStatus === 'rejected') {
+      status = 'rejected';
+    } else {
+      status = 'pending';
+    }
+
+
     newData.push({ name, status, orderStatus, isCollected, itemNum: rest.itemNum, formType:
       rest.formType, installmentAmount: rest.installmentAmount,
       totalPrice: rest.totalPrice, collectionDate: rest.collectionDate, ...rest , id:doc.id});

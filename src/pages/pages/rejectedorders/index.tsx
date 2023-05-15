@@ -46,7 +46,8 @@ const RejectedOrdersPage = () => {
     const data = doc.data();
     const { firstName, lastName, orderStatus, isCollected, ...rest } = data;
     const name = `${firstName} ${lastName}`;
-    const status = orderStatus === 'accepted' ? 'accepted' : 'rejected';
+    const status = orderStatus === 'accepted' ? 'accepted' : orderStatus === 'rejected' ? 'rejected' : 'pending';
+
     newData.push({ name, status, orderStatus, isCollected, itemNum: rest.itemNum, formType: rest.formType, installmentAmount: rest.installmentAmount, totalPrice: rest.totalPrice, collectionDate: rest.collectionDate, ...rest ,id: doc.id});
   });
 

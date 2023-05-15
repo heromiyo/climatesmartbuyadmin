@@ -60,7 +60,7 @@ const AcceptedOrdersPage = () => {
     const data = doc.data();
     const { firstName, lastName, orderStatus, isCollected, ...rest } = data;
     const name = `${firstName} ${lastName}`;
-    const status = orderStatus === 'accepted' ? 'accepted' : 'rejected';
+    const status = orderStatus === 'accepted' ? 'accepted' : orderStatus === 'rejected' ? 'rejected' : 'pending';
     newData.push({
       name,
       status,
